@@ -55,15 +55,15 @@ class VectorDBService:
         
         query_embedding = embedder.process([{"text": query}])[0]
         
-        results = self.client.search(
+        response = self.client.query_points(
             collection_name=collection_name,
-            query_vector=query_embedding.tolist(),
+            query=query_embedding.tolist(),
             limit=limit
         )
         
         return [
             {"text": r.payload["text"], "score": r.score, "metadata": r.payload}
-            for r in results
+            for r in response.points
         ]
 
 vector_db = VectorDBService()

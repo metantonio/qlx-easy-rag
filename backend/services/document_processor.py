@@ -7,10 +7,26 @@ class DocumentProcessor:
         self.chunk_overlap = chunk_overlap
 
     def process_file(self, file_path: str, user_id: int):
-        # Extremely basic text extraction for demo purposes. 
-        # In a real app, use PyPDF2 or similar for PDFs.
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
+        # List of common encodings to try
+        encodings = ["utf-8", "latin-1", "cp1252"]
+        content = None
+        
+        for enc in encodings:
+            try:
+                with open(file_path, "r", encoding=enc) as f:
+                    content = f.read()
+                break # Success
+            except (UnicodeDecodeError, PermissionError):
+                continue
+        
+        if content is None:
+            # Fallback: read with utf-8 and ignore errors
+            try:
+                with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+                    content = f.read()
+            except Exception as e:
+                print(f"Error reading file {file_path}: {e}")
+                return 0
         
         chunks = self.chunk_text(content)
         metadatas = [{"source": os.path.basename(file_path)} for _ in chunks]

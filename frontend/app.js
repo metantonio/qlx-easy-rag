@@ -7,7 +7,7 @@ async function register() {
     const response = await fetch(`/register?username=${encodeURIComponent(username)}`, {
         method: 'POST'
     });
-    
+
     currentUser = await response.json();
     document.getElementById('user-info').innerText = `Logged in as: ${currentUser.username} (ID: ${currentUser.id})`;
     addMessage('ai', `Welcome back, ${currentUser.username}! Your personal knowledge base is ready.`);
@@ -36,8 +36,12 @@ fileInput.onchange = async (e) => {
             body: formData
         });
         const result = await response.json();
-        statusDiv.innerText = `✅ Processed into ${result.chunks} chunks.`;
+        const successMsg = `✅ Document "${file.name}" processed into ${result.chunks} chunks.`;
+        statusDiv.innerText = successMsg;
         statusDiv.style.color = "var(--success)";
+
+        // Also notify in chat
+        addMessage('ai', successMsg);
     } catch (err) {
         statusDiv.innerText = "❌ Error processing document.";
         statusDiv.style.color = "#f85149";
@@ -53,22 +57,38 @@ async function sendQuery() {
     addMessage('user', query);
     queryInput.value = '';
 
-    const response = await fetch(`/query?user_id=${currentUser.id}&q=${encodeURIComponent(query)}`);
-    const result = await response.json();
+    // Add loading indicator
+    const history = document.getElementById('chat-history');
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'message ai-message loading';
+    loadingDiv.innerText = 'Thinking... 🔍';
+    history.appendChild(loadingDiv);
+    history.scrollTop = history.scrollHeight;
 
-    addMessage('ai', result.answer, result.sources);
+    try {
+        const response = await fetch(`/query?user_id=${currentUser.id}&q=${encodeURIComponent(query)}`);
+        const result = await response.json();
+
+        // Remove loading indicator
+        history.removeChild(loadingDiv);
+
+        addMessage('ai', result.answer, result.sources);
+    } catch (err) {
+        history.removeChild(loadingDiv);
+        addMessage('ai', "❌ Sorry, I encountered an error while processing your request.");
+    }
 }
 
 function addMessage(role, text, sources = []) {
     const history = document.getElementById('chat-history');
     const msgDiv = document.createElement('div');
     msgDiv.className = `message ${role}-message`;
-    
+
     let content = text;
     if (sources && sources.length > 0) {
         content += `<br><br><small style="color: var(--text-muted)">Sources: ${[...new Set(sources)].join(', ')}</small>`;
     }
-    
+
     msgDiv.innerHTML = content;
     history.appendChild(msgDiv);
     history.scrollTop = history.scrollHeight;

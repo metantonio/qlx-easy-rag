@@ -8,7 +8,14 @@ from ..core.config import settings
 class Qwen3VLEmbedder:
     def __init__(self, model_name_or_path: str = None, device: str = None):
         self.model_name_or_path = model_name_or_path or settings.EMBEDDING_MODEL_PATH
-        self.device = device or settings.DEVICE
+        requested_device = device or settings.DEVICE
+        
+        # Check if CUDA is actually available
+        if requested_device == "cuda" and not torch.cuda.is_available():
+            print("Warning: CUDA requested but not available. Falling back to CPU.")
+            self.device = "cpu"
+        else:
+            self.device = requested_device
         
         print(f"Loading Qwen3-VL Embedding model from {self.model_name_or_path}...")
         
