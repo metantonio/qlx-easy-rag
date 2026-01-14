@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-multipart
+pydantic-settings
+sqlalchemy
+qdrant-client
+openai
+httpx
+jinja2
+python-dotenv
+transformers>=4.57.0
+qwen-vl-utils>=0.0.14
+torch
+numpy
+pillow
