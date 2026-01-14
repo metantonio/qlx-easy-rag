@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -26,13 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Static files for frontend
-if os.path.exists("frontend"):
-    app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
-@app.get("/")
-async def root():
-    return {"message": "Easy-RAG API is running"}
 
 # Simplified Auth/User registration for this demo
 @app.post("/register")
@@ -91,6 +86,10 @@ async def query_kb(user_id: int, q: str):
         "answer": answer,
         "sources": [r["metadata"].get("source") for r in search_results]
     }
+
+# Static files for frontend - Mount this LAST so it doesn't shadow API routes
+if os.path.exists("frontend"):
+    app.mount("/", StaticFiles(directory="frontend", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
