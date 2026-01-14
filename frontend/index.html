@@ -10,9 +10,15 @@
 </head>
 
 <body>
+    <div id="loading-overlay" class="hidden">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p id="loading-text">Initializing Model...</p>
+        </div>
+    </div>
     <div class="container">
         <header>
-            <h1>Easy-RAG</h1>
+            <h1>QLX Easy-RAG</h1>
             <div class="auth-section">
                 <input type="text" id="username" placeholder="Enter username">
                 <button onclick="register()">Login / Join</button>

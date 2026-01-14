@@ -1,5 +1,17 @@
 let currentUser = null;
 
+function showLoading(text) {
+    const overlay = document.getElementById('loading-overlay');
+    const loadingText = document.getElementById('loading-text');
+    loadingText.innerText = text || 'Processing...';
+    overlay.classList.remove('hidden');
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loading-overlay');
+    overlay.classList.add('hidden');
+}
+
 async function register() {
     const username = document.getElementById('username').value;
     if (!username) return alert("Please enter a username");
@@ -30,6 +42,8 @@ fileInput.onchange = async (e) => {
     statusDiv.innerText = "Uploading and processing... ⏳";
     statusDiv.style.color = "var(--primary)";
 
+    showLoading(`Processing "${file.name}"...`);
+
     try {
         const response = await fetch(`/upload?user_id=${currentUser.id}`, {
             method: 'POST',
@@ -45,6 +59,8 @@ fileInput.onchange = async (e) => {
     } catch (err) {
         statusDiv.innerText = "❌ Error processing document.";
         statusDiv.style.color = "#f85149";
+    } finally {
+        hideLoading();
     }
 };
 
@@ -57,13 +73,16 @@ async function sendQuery() {
     addMessage('user', query);
     queryInput.value = '';
 
-    // Add loading indicator
+    // Add loading indicator in chat
     const history = document.getElementById('chat-history');
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'message ai-message loading';
     loadingDiv.innerText = 'Thinking... 🔍';
     history.appendChild(loadingDiv);
     history.scrollTop = history.scrollHeight;
+
+    // Optional: Also show overlay if it's the first query (pre-loading might still be happening)
+    // showLoading("Thinking..."); 
 
     try {
         const response = await fetch(`/query?user_id=${currentUser.id}&q=${encodeURIComponent(query)}`);

@@ -16,7 +16,18 @@ from .services.llm import llm_service
 # Create tables
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Easy-RAG API")
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Pre-load the embedding model on startup
+    print("Pre-loading embedding model...")
+    from .services.embedding import get_embedder
+    get_embedder()
+    yield
+    print("Shutting down...")
+
+app = FastAPI(title="Easy-RAG API", lifespan=lifespan)
 
 # CORS
 app.add_middleware(

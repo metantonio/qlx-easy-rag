@@ -19,18 +19,14 @@ class Qwen3VLEmbedder:
         
         print(f"Loading Qwen3-VL Embedding model from {self.model_name_or_path}...")
         
-        # In a real scenario, this would load the model. 
-        # For development/headless environments without GPU, we might want a mock or a smaller model.
-        # But per requirements, we use Qwen3-VL.
-        
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name_or_path, trust_remote_code=True)
         self.model = AutoModel.from_pretrained(
             self.model_name_or_path, 
             trust_remote_code=True,
-            torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
-            attn_implementation="sdpa" # Use sdpa for better compatibility if flash_attention_2 is not available
-        ).to(self.device)
-        self.model.eval()
+            dtype=torch.float16 if self.device == "cuda" else torch.float32,
+        ).to(self.device).eval()
+        
+        print("Model loaded successfully.")
 
     def process(self, inputs: List[Dict[str, Any]]) -> np.ndarray:
         """
