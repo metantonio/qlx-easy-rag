@@ -49,6 +49,13 @@ Easy-RAG is a multi-user Retrieval-Augmented Generation (RAG) system designed to
    pip install -r requirements.txt
    ```
 
+   > [!NOTE]
+   > **GPU Acceleration (Optional but Recommended)**: 
+   > If you have an NVIDIA GPU and want to use CUDA, you must install the CUDA-enabled version of PyTorch. Run the following command after `pip install -r requirements.txt`:
+   > ```bash
+   > pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 --force-reinstall
+   > ```
+
 3. Setup environment variables:
    Generate your `.env` from the provided example:
    ```bash
