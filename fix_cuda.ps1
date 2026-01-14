@@ -10,7 +10,8 @@ Write-Host "Checking for CUDA support in PyTorch..." -ForegroundColor Cyan
 Write-Host "`nVerifying CUDA installation..." -ForegroundColor Cyan
 .\venv\Scripts\python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'Torch version: {torch.__version__}')"
 
-if (.\venv\Scripts\python -c "import torch; exit(0 if torch.cuda.is_available() else 1)") {
+$check = .\venv\Scripts\python -c "import torch; exit(0 if torch.cuda.is_available() else 1)"
+if ($LASTEXITCODE -eq 0) {
     Write-Host "`n✅ SUCCESS: CUDA is now available!" -ForegroundColor Green
 } else {
     Write-Host "`n❌ FAILED: CUDA is still not available. Please ensure your NVIDIA drivers are up to date." -ForegroundColor Red
