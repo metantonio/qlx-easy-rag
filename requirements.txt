@@ -15,3 +15,4 @@ torchvision
 torchaudio
 numpy
 pillow
+pypdf

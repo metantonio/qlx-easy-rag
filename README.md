@@ -2,6 +2,8 @@
 
 Easy-RAG is a multi-user Retrieval-Augmented Generation (RAG) system designed to create personal knowledge bases from uploaded documents. It features a premium, modern dark-themed UI and uses state-of-the-art embedding models to provide accurate, context-aware answers.
 
+This is a PoC of a multi-user RAG system. It is not production ready, but it is a working prototype to explore PDF and TXT files with Qwen3-VL-Embedding-2B and Qwen2.5-Coder:7B.
+
 ## ✨ Key Features
 
 - **Multi-User Isolation**: Each user gets their own dedicated knowledge base and vector space.
